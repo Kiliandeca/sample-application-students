@@ -1,7 +1,12 @@
 language: java
+services:
+    - docker
 script:
     - mvn dependency:go-offline
     - mvn clean verify
+    - echo "$DOCKER_HUB_PASSWORD" | docker login -u kiliandeca --password-stdin
+    - docker build -t kiliandeca/sample-cpe .
+    - docker push kiliandeca/sample-cpe
 cache:
     directories:
         - $HOME/.m2
