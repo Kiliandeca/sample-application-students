@@ -4,7 +4,7 @@ addons:
   sonarcloud:
     organization: "kiliandeca"
     token:
-      secure: "0.............="
+      secure: "$SONAR_TOKEN"
 
 services:
     - docker
