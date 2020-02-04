@@ -4,7 +4,7 @@ services:
 script:
     - mvn dependency:go-offline
     - mvn clean verify
-    - echo "$DOCKER_HUB_SECRET" | docker login -u kiliandeca --password-stdin
+    - docker login -u kiliandeca -p $DOCKER_HUB_SECRET
     - docker build -t kiliandeca/sample-cpe .
     - docker push kiliandeca/sample-cpe
 cache:
