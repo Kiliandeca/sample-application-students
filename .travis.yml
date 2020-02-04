@@ -1,24 +1,34 @@
 language: java
 
-addons:
-  sonarcloud:
-    organization: "kiliandeca"
-    token:
-      secure: "$SONAR_TOKEN"
-
-services:
-    - docker
-
-script:
-    - mvn dependency:go-offline
-    - mvn clean verify
-    - sonar-scanner
-
-    - docker login -u kiliandeca -p $DOCKER_HUB_SECRET
-    - docker build -t kiliandeca/sample-cpe:api sample-application-http-api-server
-    - docker build -t kiliandeca/sample-cpe:db sample-application-db-changelog-job
-    - docker push kiliandeca/sample-cpe:api
-    - docker push kiliandeca/sample-cpe:db
 cache:
     directories:
         - $HOME/.m2
+
+jobs:
+    include:
+        - stage: test
+        script: mvn clean verify
+
+        - stage: qa
+        addons:
+            sonarcloud:
+              organization: "kiliandeca"
+              token:
+                secure: "$SONAR_TOKEN"
+        script: sonar-scanner
+
+        - stage: build
+        services:
+            - docker
+        script:
+            # Build Java
+            - mvn package -DskipTests
+
+            #Build Docker
+            - docker build -t kiliandeca/sample-cpe:api sample-application-http-api-server
+            - docker build -t kiliandeca/sample-cpe:db sample-application-db-changelog-job
+
+            # Publish
+            - docker login -u kiliandeca -p $DOCKER_HUB_SECRET
+            - docker push kiliandeca/sample-cpe:api
+            - docker push kiliandeca/sample-cpe:db
