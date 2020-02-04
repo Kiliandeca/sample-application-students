@@ -7,20 +7,20 @@ cache:
 jobs:
     include:
         - stage: test
-        script: mvn clean verify
+          script: mvn clean verify
 
         - stage: qa
-        addons:
+          addons:
             sonarcloud:
-              organization: "kiliandeca"
-              token:
-                secure: "$SONAR_TOKEN"
-        script: sonar-scanner
+                organization: "kiliandeca"
+                token:
+                    secure: "$SONAR_TOKEN"
+          script: sonar-scanner
 
         - stage: build
-        services:
+          services:
             - docker
-        script:
+          script:
             # Build Java
             - mvn package -DskipTests
 
